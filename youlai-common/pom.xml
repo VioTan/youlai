@@ -13,6 +13,7 @@
     <groupId>com.youlai</groupId>
     <artifactId>youlai-common</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>youlai-common-core</module>
         <module>youlai-common-auth</module>
@@ -32,6 +33,8 @@
         <redisson.version>3.12.5</redisson.version>
         <common-pools.version>2.8.0</common-pools.version>
     </properties>
+
+
     <dependencyManagement>
         <dependencies>
             <!-- mysql -->

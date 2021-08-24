@@ -7,5 +7,6 @@ import com.youlai.admin.entity.SysUser;
  * @author
  */
 public interface ISysUserService extends IService<SysUser> {
+    SysUser getByUsername(String username);
 }
 

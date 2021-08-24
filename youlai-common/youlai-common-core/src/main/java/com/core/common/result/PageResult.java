@@ -1,4 +1,4 @@
-package core.result;
+package com.core.common.result;
 
 import lombok.Data;
 

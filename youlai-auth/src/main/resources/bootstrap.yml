@@ -12,6 +12,9 @@ spring:
         file-extension: yaml
         group: DEFAULT_GROUP
         prefix: ${spring.application.name}
+feign:
+  okhttp:
+    enabled: true
 rsa:
   publicKey: 123456
 

@@ -1,4 +1,4 @@
-package core.util;
+package com.core.common.util;
 
 import lombok.NoArgsConstructor;
 

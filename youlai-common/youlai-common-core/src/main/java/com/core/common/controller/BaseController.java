@@ -1,4 +1,4 @@
-package core.controller;
+package com.core.common.controller;
 
 /**
  * @author:GSHG

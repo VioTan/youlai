@@ -3,10 +3,11 @@ package com.youlai.admin.controller;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.core.common.result.PageResult;
+import com.core.common.result.Result;
 import com.youlai.admin.entity.SysUser;
 import com.youlai.admin.service.ISysUserService;
-import core.result.PageResult;
-import core.result.Result;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -15,10 +16,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -44,11 +45,11 @@ public class SysUserController {
 
     })
     @GetMapping("/list")
-    private Result list(Integer page,Integer limit,String username,String nickname){
+    private Result list(Integer page, Integer limit, String username, String nickname){
        LambdaQueryWrapper<SysUser> queryWrapper =new LambdaQueryWrapper<SysUser>()
                .like(StrUtil.isNotBlank(username),SysUser::getUsername,username)
                .like(StrUtil.isNotBlank(nickname),SysUser::getNickname,nickname)
-               .orderByDesc(SysUser::getCreateBy)
+//               .orderByDesc(SysUser::getCreateBy)
                .orderByDesc(SysUser:: getGmtCreate
                );
        if(page !=null && limit !=null){
@@ -61,4 +62,15 @@ public class SysUserController {
         List<SysUser> list = iSysUserService.list(queryWrapper);
         return Result.success(list);
     }
+
+    @ApiOperation(value = "更具用户名获取用户信息")
+    @ApiImplicitParam(name = "username",value = "用户名",required = true,paramType = "path",dataType = "String")
+    @GetMapping("username/{username}")
+    public Result<SysUser> getUserByUsername(@PathVariable String username){
+
+       SysUser user = iSysUserService.getByUsername(username);
+
+        return Result.success(user);
+    }
+
 }

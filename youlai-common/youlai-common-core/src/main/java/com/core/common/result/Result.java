@@ -1,4 +1,4 @@
-package core.result;
+package com.core.common.result;
 
 import lombok.Data;
 
@@ -78,6 +78,10 @@ public class Result<T> implements Serializable {
         result.setData(data);
         result.setMsg(msg);
         return result;
+    }
+
+    public static <T> Result<T> failed(IResultCode resultCode) {
+        return result(resultCode.getCode(), resultCode.getMsg(), null);
     }
 
 }
