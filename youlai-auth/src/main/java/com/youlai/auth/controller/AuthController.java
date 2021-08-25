@@ -1,8 +1,10 @@
 package com.youlai.auth.controller;
 
 import com.core.common.result.Result;
-import com.youlai.admin.api.UserFeignClient;
+import com.youlai.admin.api.service.UserFeignClient;
+import com.youlai.admin.api.pojo.dto.UserDTO;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +30,13 @@ public class AuthController {
         return Result.success(this.publicKey);
     }
 
+    @Autowired
     private UserFeignClient userFeignClient;
 
+    @GetMapping("/loadUserByUsername")
+    public Result loadUserByUsername(){
+        Result userDTO = userFeignClient.getUserByUsername("admin");
+        return userDTO;
+    }
 
 }

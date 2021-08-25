@@ -1,4 +1,4 @@
-package com.youlai.admin.api;
+package com.youlai.admin.api.service;
 
 import com.youlai.admin.api.fallback.UserFeignFallbackClient;
 import com.core.common.result.Result;
@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @FeignClient(value = "youlai-admin",fallback = UserFeignFallbackClient.class)
+/**
+ * @author Eric
+ */
 public interface UserFeignClient {
-    @GetMapping("/api/v1/users/username/{username}")
+
+    @GetMapping("/api/users/username/{username}")
     Result<SysUser> getUserByUsername(@PathVariable String username);
 
 }
