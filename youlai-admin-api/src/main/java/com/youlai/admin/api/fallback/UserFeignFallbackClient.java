@@ -19,7 +19,6 @@ public class UserFeignFallbackClient implements UserFeignClient {
 
     @Override
     public Result<SysUser> getUserByUsername(String username) {
-
         log.error("feign远程调用系统用户服务异常后的降级方法");
         return Result.failed(ResultCodeEnum.DEGRADATION);
     }
