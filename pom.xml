@@ -44,6 +44,7 @@
         <redisson.version>3.12.5</redisson.version>
         <nimbus-jose-jwt.version>8.16</nimbus-jose-jwt.version>
         <minio.version>7.1.0</minio.version>
+        <dozer.version>6.2.0</dozer.version>
     </properties>
 
     <dependencies>
