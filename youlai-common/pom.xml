@@ -21,6 +21,7 @@
         <module>youlai-common-redis</module>
         <module>youlai-common-swagger</module>
         <module>youlai-common-web</module>
+        <module>common-log</module>
     </modules>
 
     <properties>

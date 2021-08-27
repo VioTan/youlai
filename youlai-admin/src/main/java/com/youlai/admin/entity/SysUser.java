@@ -4,7 +4,7 @@ package com.youlai.admin.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.core.common.entity.BaseEntity;
+import com.core.common.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

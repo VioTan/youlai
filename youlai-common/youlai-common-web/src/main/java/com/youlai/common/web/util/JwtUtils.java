@@ -27,7 +27,7 @@ import java.util.List;
 public class JwtUtils {
 
     /**
-     *  从请求头中获取 JWT载体key
+     *  从请求头中获取 JWT载体key JSON对象 - 除了默认的字段，还可以扩展自定义字段
      * @return
      */
     @SneakyThrows

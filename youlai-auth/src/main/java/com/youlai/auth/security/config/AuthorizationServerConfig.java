@@ -30,6 +30,9 @@ import java.util.Map;
 /**
  * 认真授权配置
  *
+ * 配置OAuth2认证允许接入的客户端的信息
+ *我们需要把客户端信息配置在认证服务器上来表示认证服务器所认可的客户端。一般可配置在认证服务器的内存中，但是这样很不方便管理扩展。
+ * 所以实际最好配置在数据库中的，提供可视化界面对其进行管理，方便以后像PC端、APP端、小程序端等多端灵活接入。
  * @author:GSHG
  * @date: 2021-08-26 9:55
  * description:
@@ -66,6 +69,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         tokenEnhancers.add(jwtAccessTokenConverter());
         tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
 
+        endpoints.authenticationManager(authenticationManager)
+                 .accessTokenConverter(jwtAccessTokenConverter())
+                .tokenEnhancer(tokenEnhancerChain)
+                .userDetailsService(userDetailsService)
+                // refresh token有两种使用方式：重复使用(true)、非重复使用(false)，默认为true
+                //      1 重复使用：access token过期刷新时， refresh token过期时间未改变，仍以初次生成的时间为准
+                //      2 非重复使用：access token过期刷新时， refresh token过期时间延续，在refresh token有效期内刷新便永不失效达到无需再次登录的目的
+                .reuseRefreshTokens(true);
 
     }
 
@@ -102,6 +113,22 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     /**
      * 从classpath下的秘钥库中获取秘钥对(公钥 + 私钥)
+     *
+     * 使用JDK工具的keytool生成JKS密钥库(Java Key Store)，并将youlai.jks放到resources目录
+     *
+     * 生成命令：keytool -genkey -alias youlai -keyalg RSA -keypass 123456 -keystore youlai.jks -storepass 123456
+     *
+     *-genkey 生成密钥
+     *
+     * -alias 别名
+     *
+     * -keyalg 密钥算法
+     *
+     * -keypass 密钥口令
+     *
+     * -keystore 生成密钥库的存储路径和名称
+     *
+     * -storepass 密钥库口令
      */
     @Bean
     public KeyPair keyPair(){
