@@ -10,11 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.youlai</groupId>
-    <artifactId>common-log</artifactId>
+    <artifactId>common-mybatis</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
 
 </project>

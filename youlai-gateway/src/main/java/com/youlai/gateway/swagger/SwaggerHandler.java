@@ -13,6 +13,6 @@ public class SwaggerHandler {
 
     private SecurityConfiguration securityConfiguration;
 
-   // private UiConfiguration
+    //private U
 
 }
