@@ -1,4 +1,5 @@
-package com.youlai.admin.entity;
+package com.youlai.admin.api.pojo.entity;
+
 
 
 import com.baomidou.mybatisplus.annotation.IdType;

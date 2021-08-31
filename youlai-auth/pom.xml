@@ -79,7 +79,7 @@
             <!--<artifactId>ums-api</artifactId>-->
             <!--<version>${youlai.version}</version>-->
         <!--</dependency>-->
-
+        <!--  项目模块 -->
         <dependency>
             <groupId>com.youlai</groupId>
             <artifactId>youlai-admin-api</artifactId>

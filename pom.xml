@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.youlai</groupId>
     <artifactId>youlai-mall</artifactId>
+    <groupId>com.youlai</groupId>
     <version>2.0.0</version>
     <packaging>pom</packaging>
 
@@ -32,8 +32,8 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
-        <lombok.version>1.16.20</lombok.version>
-        <hutool.version>5.7.10</hutool.version>
+        <lombok.version>1.18.18</lombok.version>
+        <hutool.version>5.5.8</hutool.version>
         <mysql.version>8.0.19</mysql.version>
         <druid.version>1.2.4</druid.version>
         <mybatis-plus.version>3.4.3</mybatis-plus.version>

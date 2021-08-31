@@ -1,12 +1,9 @@
 package com.youlai.admin.controller;
 
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.core.common.result.PageResult;
 import com.core.common.result.Result;
-import com.youlai.admin.entity.SysUser;
+import com.youlai.admin.api.pojo.entity.SysUser;
 import com.youlai.admin.service.ISysUserService;
+
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+
 
 /**
  * @author:GSHG
@@ -32,7 +29,7 @@ import java.util.List;
 @RequestMapping("/api/users")
 @Slf4j
 @AllArgsConstructor
-public class SysUserController {
+public class UserController {
     @Autowired
     private ISysUserService iSysUserService;
 
@@ -44,23 +41,17 @@ public class SysUserController {
             @ApiImplicitParam(name = "nickname",value = "姓名",paramType = "query",dataType = "String"),
 
     })
-    @GetMapping("/list")
-    private Result list(Integer page, Integer limit, String username, String nickname){
-       LambdaQueryWrapper<SysUser> queryWrapper =new LambdaQueryWrapper<SysUser>()
-               .like(StrUtil.isNotBlank(username),SysUser::getUsername,username)
-               .like(StrUtil.isNotBlank(nickname),SysUser::getNickname,nickname)
-//               .orderByDesc(SysUser::getCreateBy)
-               .orderByDesc(SysUser:: getGmtCreate
-               );
-       if(page !=null && limit !=null){
-                Page<SysUser> result = iSysUserService.page(new Page<>(page,limit),queryWrapper);
-                return PageResult.success(result.getRecords(),result.getTotal());
-       }else if(limit != null){
-           queryWrapper.last("LIMIT" + limit);
+    @GetMapping
+    private Result list(Integer page, Integer limit, String username, String nickname,String mobile,Integer status,Long deptId){
+        SysUser user = new SysUser();
+        user.setNickname(nickname);
+        user.setMobile(mobile);
+        user.setStatus(status);
+        user.setDeptId(deptId);
 
-       }
-        List<SysUser> list = iSysUserService.list(queryWrapper);
-        return Result.success(list);
+        //iSysUserService.list();
+       // Result.success(list)
+        return null;
     }
 
     @ApiOperation(value = "更具用户名获取用户信息")

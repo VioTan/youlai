@@ -3,7 +3,7 @@ package com.youlai.auth.security.service;
 import com.core.common.result.Result;
 import com.core.common.result.ResultCodeEnum;
 import com.youlai.admin.api.service.UserFeignClient;
-import com.youlai.admin.entity.SysUser;
+import com.youlai.admin.api.pojo.entity.SysUser;
 import com.youlai.auth.common.enums.OAuthClientEnum;
 import com.youlai.auth.domain.OAuthUserDetails;
 import com.youlai.common.web.util.JwtUtils;

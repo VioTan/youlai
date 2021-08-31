@@ -1,7 +1,7 @@
 package com.youlai.auth.domain;
 
 import com.core.common.util.CollectionUtils;
-import com.youlai.admin.entity.SysUser;
+import com.youlai.admin.api.pojo.entity.SysUser;
 import com.youlai.auth.common.enums.PasswordEncoderTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;

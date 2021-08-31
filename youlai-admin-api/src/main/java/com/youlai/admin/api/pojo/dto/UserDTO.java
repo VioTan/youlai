@@ -1,10 +1,8 @@
 package com.youlai.admin.api.pojo.dto;
 
-import com.youlai.admin.entity.SysUser;
+import com.youlai.admin.api.pojo.entity.SysUser;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * @author:GSHG
