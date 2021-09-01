@@ -1,0 +1,106 @@
+# 提供云环境冒着风险方便大家演示用，切勿修改配置，开发定位错误和大家使用比较麻烦，望理解。
+# 如果要改配置搭建下本地环境哈，步骤在项目说明README
+# 项目对你有帮助麻烦给个❤，感激不尽！https://github.com/hxrui
+spring:
+# security:
+#   oauth2: 
+#     resourceserver:
+#       jwt:
+#         jwk-set-uri: 'http://localhost:9999/youlai-auth/oauth/public-key'
+  redis:
+    timeout: PT10S
+    database: 0
+    host: www.youlai.tech
+    port: 6379
+    password: 123456
+    pool:
+      # 连接池最大连接数（使用负值表示没有限制）
+      maxactive: 64
+      # 连接池中的最大空闲连接
+      maxidle: 64
+      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      maxwait: -1
+      # 连接池中的最小空闲连接
+      minidle: 1
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true # 启用服务发现
+          lower-case-service-id: true
+      routes:
+        - id: 认证中心
+          uri: lb://youlai-auth
+          predicates:
+            - Path=/youlai-auth/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+        - id: 系统服务
+          uri: lb://youlai-admin
+          predicates:
+            - Path=/youlai-admin/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+        - id: 订单服务
+          uri: lb://mall-oms
+          predicates:
+            - Path=/mall-oms/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+        - id: 商品服务
+          uri: lb://mall-pms
+          predicates:
+            - Path=/mall-pms/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+        - id: 会员服务
+          uri: lb://mall-ums
+          predicates:
+            - Path=/mall-ums/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+        - id: 营销服务
+          uri: lb://mall-sms
+          predicates:
+            - Path=/mall-sms/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+
+# 配置白名单路径(无需登录)
+security:
+  ignoreUrls:
+      - /youlai-auth/oauth/token
+      - /webjars/**
+      - /doc.html
+      - /swagger-resources/**
+      - /*/v2/api-docs
+      - /mall-pms/app-api/v1/categories/**
+      - /mall-pms/app-api/v1/products/**
+      - /mall-pms/app-api/v1/skus/**
+      - /mall-sms/app-api/v1/adverts
+
+# 是否开启本地缓存
+local-cache:
+  enabled: false 
+
+# 全局参数设置
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 10000
+  SocketTimeout: 10000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+ 
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 40000

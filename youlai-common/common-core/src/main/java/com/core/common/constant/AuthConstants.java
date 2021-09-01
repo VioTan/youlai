@@ -1,6 +1,6 @@
 package com.core.common.constant;
 
-/**
+/** JWT在request中的请求代码
  * @author Eric
  */
 public interface AuthConstants {
