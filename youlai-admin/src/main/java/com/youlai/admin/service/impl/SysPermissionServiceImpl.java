@@ -9,6 +9,7 @@ import com.youlai.admin.mapper.SysPermissionMapper;
 import com.youlai.admin.service.ISysPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  * @date: 2021-09-01 11:35
  * description:
  */
+@Service
 public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper,SysPermission> implements ISysPermissionService {
     @Autowired
     private RedisTemplate redisTemplate;

@@ -109,6 +109,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         }
 
         /**
+         * 使用cmd命令生产  oauth2秘钥
          * 从classpath下的秘钥库中获取秘钥对(公钥 + 私钥)
          * (1). 从密钥库获取密钥对(密钥+私钥)
          * (2). 认证服务器私钥对token签名
@@ -116,6 +117,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
          * 使用JDK工具的keytool生成JKS密钥库(Java Key Store)，并将youlai.jks放到resources目录
          *
          * 在windows生成命令：keytool -genkey -alias youlai -keyalg RSA -keypass 123456 -keystore youlai.jks -storepass 123456
+         *
+         * 生成公共秘钥：
+         *  keytool -list -rfc --keystore ffzs-jwt.jks | openssl x509 -inform pem -pubkey
+         *
          *
          *-genkey 生成密钥
          *
