@@ -18,6 +18,8 @@ public class Result<T> implements Serializable {
 
     private String msg;
 
+    private Integer total;
+
     public static <T> Result<T> success() {
         return success(null);
     }
@@ -78,6 +80,17 @@ public class Result<T> implements Serializable {
         result.setData(data);
         result.setMsg(msg);
         return result;
+    }
+
+    public static <T> Result success(T data,Long total){
+        Result<T> result = new Result<>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setMsg(ResultCodeEnum.SUCCESS.getMsg());
+        result.setData(data);
+        result.setTotal(total.intValue());
+
+        return result;
+
     }
 
     public static <T> Result<T> failed(IResultCode resultCode) {

@@ -1,5 +1,7 @@
 package com.youlai.admin.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.result.Result;
 import com.youlai.admin.api.pojo.entity.SysUser;
 import com.youlai.admin.service.ISysUserService;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = " 用户接口 ")
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @Slf4j
 @AllArgsConstructor
 public class UserController {
@@ -44,14 +46,15 @@ public class UserController {
     @GetMapping("list")
     private Result list(Integer page, Integer limit, String username, String nickname,String mobile,Integer status,Long deptId){
         SysUser user = new SysUser();
+        user.setUsername(username);
         user.setNickname(nickname);
         user.setMobile(mobile);
         user.setStatus(status);
         user.setDeptId(deptId);
 
-        //iSysUserService.list();
-       // Result.success(list)
-        return null;
+        IPage<SysUser> result = iSysUserService.list(new Page<>(page,limit),user);
+
+        return Result.success(result.getRecords(),result.getTotal());
     }
 
     @ApiOperation(value = "更具用户名获取用户信息")

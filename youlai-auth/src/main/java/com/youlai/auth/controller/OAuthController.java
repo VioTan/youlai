@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,32 +23,30 @@ import java.util.Map;
  * @date: 2021-08-16 12:48
  * description:
  */
-@RefreshScope
-@RestController
+
 @Api(tags = "认证登录中心")
+@RestController
 @RequestMapping("/oauth")
 @AllArgsConstructor
+@Slf4j
 public class OAuthController {
 
-//    @Value("${rsa.publicKey}")
-//     public String publicKey;
+  //  private KeyPair keyPair;
 
-    private KeyPair keyPair;
-
-    @ApiOperation(value = "获取公钥",notes = "login")
-    @GetMapping("/getPublicKey")
-    public Map<String, Object> getPublicKey(){
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        RSAKey key = new RSAKey.Builder(publicKey).build();
-        return new JWKSet(key).toJSONObject();
-    }
-
-    private UserFeignClient userFeignClient;
-
-    @GetMapping("/loadUserByUsername")
-    public Result loadUserByUsername(){
-        Result userDTO = userFeignClient.getUserByUsername("admin");
-        return userDTO;
-    }
+//    @ApiOperation(value = "获取公钥",notes = "login")
+//    @GetMapping("/getPublicKey")
+//    public Map<String, Object> getPublicKey(){
+//        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+//        RSAKey key = new RSAKey.Builder(publicKey).build();
+//        return new JWKSet(key).toJSONObject();
+//    }
+//
+//    private UserFeignClient userFeignClient;
+//
+//    @GetMapping("/loadUserByUsername")
+//    public Result loadUserByUsername(){
+//        Result userDTO = userFeignClient.getUserByUsername("admin");
+//        return userDTO;
+//    }
 
 }

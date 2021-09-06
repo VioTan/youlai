@@ -24,9 +24,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeRequests().antMatchers("/oauth").permitAll()
+        httpSecurity.authorizeRequests()
+                .antMatchers("/oauth").permitAll()
                 // @link https://gitee.com/xiaoym/knife4j/issues/I1Q5X6 (接口文档knife4j需要放行的规则)
-        .antMatchers("/webjars/**","/doc.html","/v2/api-docs").permitAll()
+                .antMatchers("/webjars/**","/doc.html","/v2/api-docs").permitAll()
+                .antMatchers("/getPublicKey").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();

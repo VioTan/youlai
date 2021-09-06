@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "客户端接口")
 @RestController
-@RequestMapping("api/oauth-client")
+@RequestMapping("/api/v1/oauth-clients")
 @AllArgsConstructor
 public class OauthClientController {
 
