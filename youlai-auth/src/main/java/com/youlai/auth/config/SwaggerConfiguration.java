@@ -1,10 +1,8 @@
-package com.youlai.admin.config;
+package com.youlai.auth.config;
 
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -20,26 +18,26 @@ import java.util.List;
 
 /**
  * @author:GSHG
- * @date: 2021-09-02 18:09
+ * @date: 2021-09-06 14:38
  * description:
  */
 @Configuration
 @EnableSwagger2WebMvc
-@Import(BeanValidatorPluginsConfiguration.class)
-@Slf4j
 public class SwaggerConfiguration {
 
+    @Bean
     public Docket restApi(){
-        //schema
+        //schmea
         List<GrantType> grantTypes = new ArrayList<>();
         //密码模式
-        String passwordTokenUrl ="http://localhost:9999/youlai-auth/oauth/token";
+        String passwordTokenUrl="http://localhost:9999/youlai-auth/oauth/token";
         ResourceOwnerPasswordCredentialsGrant resourceOwnerPasswordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(passwordTokenUrl);
         grantTypes.add(resourceOwnerPasswordCredentialsGrant);
-        OAuth oAuth = new OAuthBuilder().name("oauth2")
-                .grantTypes(grantTypes).build();
+        OAuth oAuth = new OAuthBuilder().name("oauth2").
+                grantTypes(grantTypes).build();
+
         //context
-        //scope
+        //scope方位
         List<AuthorizationScope> scopes = new ArrayList<>();
         scopes.add(new AuthorizationScope("read","read  resources"));
         scopes.add(new AuthorizationScope("write","write resources"));
@@ -49,35 +47,35 @@ public class SwaggerConfiguration {
         SecurityReference securityReference = new SecurityReference("oauth2",scopes.toArray(new AuthorizationScope[]{}));
 
         SecurityContext securityContext = new SecurityContext(Lists.newArrayList(securityReference), PathSelectors.ant("/**"));
+
         //schemas
         List<SecurityScheme> securitySchemes = Lists.newArrayList(oAuth);
         //securyContext
         List<SecurityContext> securityContexts = Lists.newArrayList(securityContext);
-
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.youlai.admin.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.youlai.auth.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .securityContexts(securityContexts)
                 .securitySchemes(securitySchemes)
-                .apiInfo(apiInfo())
-                ;
+                .apiInfo(apiInfo());
+
+
+
     }
 
     private ApiInfo apiInfo(){
-            return  new ApiInfoBuilder()
-                    .title("系统管理")
-                    .description("<div style='font-size:14px;color:red;'>用户、角色、部门、菜单、权限、字典、客户端接口</div>")
-                    .termsOfServiceUrl("https://www.youlai.tech")
-                    .contact(new Contact("Eric学习","https://github.com/VioTan","981524709@qq.com"))
-                    .license("Open Source")
-                    .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
-                    .version("1.0.0")
-                    .build();
+        return new ApiInfoBuilder().title("OAuth2认证中心")
+                .description("<div style='font-size:14px;color:red;'>OAuth2认证、注销、获取验签公钥接口</div>")
+                .termsOfServiceUrl("https://www.youlai.tech")
+                .contact(new Contact("Eric的学习","https://github.com/VioTan","981524709@qq.com"))
+                .license("Open Source")
+                .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
+                .version("1.0.0")
+                .build();
+
 
     }
-
-
 
 }

@@ -41,7 +41,7 @@ public class UserController {
             @ApiImplicitParam(name = "nickname",value = "姓名",paramType = "query",dataType = "String"),
 
     })
-    @GetMapping
+    @GetMapping("list")
     private Result list(Integer page, Integer limit, String username, String nickname,String mobile,Integer status,Long deptId){
         SysUser user = new SysUser();
         user.setNickname(nickname);
