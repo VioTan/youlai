@@ -22,7 +22,7 @@ public class UrlPermRolesLocalCache<T> {
     @PostConstruct
     private void init(){
         localCache = CacheBuilder.newBuilder()
-                //设置本地魂村容器的初始容量
+                //设置本地缓存容器的初始容量
         .initialCapacity(1)
                 //设置本地缓存的最大容量
         .maximumSize(10)

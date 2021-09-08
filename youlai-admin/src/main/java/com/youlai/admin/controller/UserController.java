@@ -1,9 +1,12 @@
 package com.youlai.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.core.common.result.Result;
 import com.youlai.admin.api.pojo.entity.SysUser;
+import com.youlai.admin.api.pojo.entity.SysUserRole;
+import com.youlai.admin.service.ISysUserRoleService;
 import com.youlai.admin.service.ISysUserService;
 
 
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -34,19 +39,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
     private ISysUserService iSysUserService;
+    @Autowired
+    private ISysUserRoleService iSysUserRoleService;
 
     @ApiOperation(value = "列表分页",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page",value = "页码",paramType = "query",dataType = "Integer"),
-            @ApiImplicitParam(name = "limit",value = "每页数量",paramType = "query",dataType = "Integer"),
-            @ApiImplicitParam(name = "username",value = "用户名",paramType = "query",dataType = "String"),
-            @ApiImplicitParam(name = "nickname",value = "姓名",paramType = "query",dataType = "String"),
-
+            @ApiImplicitParam(name = "page", value = "页码", paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "limit", value = "每页数量", paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "nickname", value = "用户昵称", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "mobile", value = "手机号码", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "状态", paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "deptId", value = "部门ID", paramType = "query", dataType = "Long"),
     })
-    @GetMapping("list")
-    private Result list(Integer page, Integer limit, String username, String nickname,String mobile,Integer status,Long deptId){
+    @GetMapping
+    private Result list(       Integer page,
+                               Integer limit,
+                               String nickname,
+                               String mobile,
+                               Integer status,
+                               Long deptId){
         SysUser user = new SysUser();
-        user.setUsername(username);
         user.setNickname(nickname);
         user.setMobile(mobile);
         user.setStatus(status);
@@ -57,7 +69,23 @@ public class UserController {
         return Result.success(result.getRecords(),result.getTotal());
     }
 
-    @ApiOperation(value = "更具用户名获取用户信息")
+    @ApiOperation(value = "用户详情")
+    @ApiImplicitParam(name = "id",value = "用户id",required = true,paramType = "path",dataType = "Long")
+    @GetMapping("/{id}")
+    public  Result detail(@PathVariable  Long id){
+       SysUser user = iSysUserService.getById(id);
+       if(user != null){
+           List<Long> roleIds = iSysUserRoleService.list(new LambdaQueryWrapper<SysUserRole>()
+           .eq(SysUserRole::getRoleId,user.getId())
+                   .select(SysUserRole::getRoleId)
+           ).stream().map(SysUserRole::getRoleId).collect(Collectors.toList());
+           user.setRoleIds(roleIds);
+       }
+
+        return Result.success(user);
+    }
+
+    @ApiOperation(value = "根据用户名获取用户信息")
     @ApiImplicitParam(name = "username",value = "用户名",required = true,paramType = "path",dataType = "String")
     @GetMapping("username/{username}")
     public Result<SysUser> getUserByUsername(@PathVariable String username){

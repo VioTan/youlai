@@ -52,7 +52,7 @@ public class ResourceServerManager implements ReactiveAuthorizationManager<Autho
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
         ServerHttpRequest request = authorizationContext.getExchange().getRequest();
-        //预检测请求放行
+        //1、对应跨域的预检测请求直接放行放行
         if(request.getMethod() == HttpMethod.OPTIONS){
                 return Mono.just(new AuthorizationDecision(true));
         }
@@ -60,10 +60,11 @@ public class ResourceServerManager implements ReactiveAuthorizationManager<Autho
         PathMatcher pathMatcher = new AntPathMatcher(); //Ant匹配器
         String method =  request.getMethodValue();
         String path = request.getURI().getPath();
+
         // Restful接口权限设计 @link https://www.cnblogs.com/haoxianrui/p/14961707.html
         String restfulPath = method + ":" + path;
 
-        //移动端请求需认证但无需鉴权判断   // 1. 对应跨域的预检请求直接放行
+        //移动端请求需认证但无需鉴权判断
         String token = request.getHeaders().getFirst(AuthConstants.AUTHORIZATION_KEY);
         if(pathMatcher.match(GlobalConstants.APP_API_PATTERN,path)){
             // 如果token以"bearer "为前缀，到这里说明JWT有效即已认证
@@ -75,19 +76,20 @@ public class ResourceServerManager implements ReactiveAuthorizationManager<Autho
             }
         }
 
-        //缓存取 URL权限角色集合 规则数据
+        //缓存取 URL权限角色集合 规则数据，默认没开启
+        //3.缓存取资源权限角色关系列表
         Map<String,Object> urlPermRolesRules;
         if(localCacheEnabled){
-            //3.缓存取资源权限角色关系列表
             urlPermRolesRules = (Map<String, Object>) urlPermRolesLocalCache.getCache(GlobalConstants.URL_PERM_ROLES_KEY);
             if(null == urlPermRolesRules){
                 urlPermRolesRules = redisTemplate.opsForHash().entries(GlobalConstants.URL_PERM_ROLES_KEY);
                 urlPermRolesLocalCache.setLocalCache(GlobalConstants.URL_PERM_ROLES_KEY,urlPermRolesRules);
             }
         }else {
+            //从redis上获取
             urlPermRolesRules = redisTemplate.opsForHash().entries(GlobalConstants.URL_PERM_ROLES_KEY);
         }
-
+        System.out.println("urlPermRolesRules = " + urlPermRolesRules);
         //根据请求路径判断有访问权限的角色列表
         //拥有访问权限的角色 容器启动完成加载角色权限至Redis缓存
         // 4.请求路径匹配到的资源需要的角色权限集合authorities
@@ -110,6 +112,7 @@ public class ResourceServerManager implements ReactiveAuthorizationManager<Autho
         }
 
         //判断JWT中携带的用户角色是否有权限访问
+        // 5. roleId是请求用户的角色(格式:ROLE_{roleId})，authorities是请求资源所需要角色的集合
          Mono<AuthorizationDecision> authorizationDecisionMono =  mono.filter(Authentication::isAuthenticated)
                     .flatMapIterable(Authentication::getAuthorities)
                     .map(GrantedAuthority::getAuthority)

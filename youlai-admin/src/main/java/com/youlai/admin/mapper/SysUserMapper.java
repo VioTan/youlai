@@ -28,8 +28,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
             "       left join sys_user_role ur on u.id=ur.user_id " +
             "       left join sys_role r on ur.role_id=r.id " +
             "   where u.deleted != 1 " +
-            " <if test ='user.username!=null and user.username.trim() neq \"\"'>" +
-            "       and u.username like concat('%',#{user.username},'%')" +
+            " <if test ='user.nickname!=null and user.nickname.trim() neq \"\"'>" +
+            "       and u.nickname like concat('%',#{user.nickname},'%')" +
             " </if>" +
             " <if test ='user.mobile!=null and user.mobile.trim() neq \"\"'>" +
             "       and u.mobile like concat('%',#{user.mobile},'%')" +

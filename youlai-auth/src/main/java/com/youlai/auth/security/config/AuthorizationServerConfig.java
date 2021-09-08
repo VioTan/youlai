@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -38,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 认真授权配置
+ * 认证授权配置
  *
  * 配置OAuth2认证允许接入的客户端的信息
  *我们需要把客户端信息配置在认证服务器上来表示认证服务器所认可的客户端。一般可配置在认证服务器的内存中，但是这样很不方便管理扩展。
@@ -58,37 +59,65 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
         /**
          * OAuth2客户端【数据库加载】
+         *
+         * ClientDetailsServiceConfigurer
+         *
+         * 用来配置客户端详情服务（ClientDetailsService），客户端详情信息在这里进行初始化，
+         * 能够把客户端详情信息写死在这里或者是通过数据库来存储调取详情信息。
+         *
          */
         @Override
         @SneakyThrows
         public void configure(ClientDetailsServiceConfigurer configurer){
+            //实现客户端详情服务，从数据库中获取认证信息
             configurer.withClientDetails(clientDetailsService);
         }
 
         /**
-         * 配置授权（authorization）以及令牌（token）的访问断点和令牌服务(token services)
+         * 配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)
+         *
+         * 生成token的转换器，而token令牌默认是有签名的，且资源服务器需要验证这个签名
+         *
+         * 验签包括两种方式：
+         * 对称加密、非对称加密（公钥密钥）
+         * 对称加密需要授权服务器和资源服务器存储同一key值，而非对称加密可使用密钥加密，暴露公钥给资源服务器验签
+         *
          * @param endpoints
          */
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints){
+            //jwt插入用户信息需要用TokenEnhancerChain作为容器
             TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
             List<TokenEnhancer> tokenEnhancers = new ArrayList<>();
-            //通过userId和username  JWT内容增强  使用匿名方法返回accessToken
+            //通过userId和username  JWT内容增强(自定义字段userId和username)  使用匿名方法返回accessToken
             tokenEnhancers.add(tokenEnhancer());
-            //使用非对称加密算法对token签名 +  公钥 + 私钥
+            //使用非对称加密算法，对token签名(私钥)
             tokenEnhancers.add(jwtAccessTokenConverter());
             tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
 
             endpoints.authenticationManager(authenticationManager)
+                    // 配置JwtAccessToken转换器
                      .accessTokenConverter(jwtAccessTokenConverter())
                     .tokenEnhancer(tokenEnhancerChain)
+                    // refresh_token需要userDetailsService
                     .userDetailsService(userDetailsService)
                     // refresh token有两种使用方式：重复使用(true)、非重复使用(false)，默认为true
                     //      1 重复使用：access token过期刷新时， refresh token过期时间未改变，仍以初次生成的时间为准
                     //      2 非重复使用：access token过期刷新时， refresh token过期时间延续，在refresh token有效期内刷新便永不失效达到无需再次登录的目的
+                    // refresh_token需要userDetailsService
                     .reuseRefreshTokens(true);
 
         }
+
+//        @Override
+//        public void configure(AuthorizationServerSecurityConfigurer oauthServer){
+//            oauthServer
+//                    // 开启/oauth/token_key验证端口无权限访问
+//                    .tokenKeyAccess("permitAll()")
+//            // 开启/oauth/check_token验证端口认证权限访问
+//            .checkTokenAccess("isAuthenticated()");
+//
+//        }
 
         /**
          * 使用非对称加密算法对token签名
@@ -109,8 +138,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         }
 
         /**
+         * 从classpath下的秘钥库中获取秘钥对(公钥+私钥)
+         * 导入证书
          * 使用cmd命令生产  oauth2秘钥
-         * 从classpath下的秘钥库中获取秘钥对(公钥 + 私钥)
          * (1). 从密钥库获取密钥对(密钥+私钥)
          * (2). 认证服务器私钥对token签名
          * (3). 提供公钥获取接口供资源服务器验签使用
@@ -136,13 +166,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
          */
         @Bean
         public KeyPair keyPair(){
+            //导入证书
             KeyStoreKeyFactory factory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"),"123456".toCharArray());
             KeyPair keyPair = factory.getKeyPair("jwt","123456".toCharArray());
             return keyPair;
         }
 
     /**
-     * JWT内容增强  通过userId和username
+     * JWT内容增强  增加自定义字段userId和username
      * @return
      */
     @Bean

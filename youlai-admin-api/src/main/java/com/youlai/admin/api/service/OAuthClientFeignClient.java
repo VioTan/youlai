@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "youlai-admin",contextId = "oauth-client")
 public interface OAuthClientFeignClient {
 
-    @GetMapping("/api/v1/oauth-clientss/{clientId}")
+    @GetMapping("/api/v1/oauth-clients/{clientId}")
     Result<SysOauthClient> getOAuthClientById(@PathVariable String clientId);
 
 }

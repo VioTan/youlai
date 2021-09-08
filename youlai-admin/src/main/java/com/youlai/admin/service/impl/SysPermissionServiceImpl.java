@@ -35,7 +35,9 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper,Sy
 
     @Override
     public boolean refreshPermRolesRules() {
+        //删除redis的键
         redisTemplate.delete(Arrays.asList(GlobalConstants.URL_PERM_ROLES_KEY,GlobalConstants.BTN_PERM_ROLES_KEY));
+        //从数据库中获取权限
         List<SysPermission> permissions = this.listPermRoles();
         if(CollectionUtil.isNotEmpty(permissions)){
             // 初始化URL【权限->角色(集合)】规则
@@ -45,10 +47,13 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper,Sy
            if(CollectionUtil.isNotEmpty(urlPermList)){
                Map<String,List<String>> urlPermRoles = new HashMap<>();
                urlPermList.stream().forEach(item -> {
+                   //获取角色权限路径
                    String perm = item.getUrlPerm();
+                   //获取角色
                    List<String> roles = item.getRoles();
                    urlPermRoles.put(perm,roles);
                });
+               //讲权限集合放到redis
                redisTemplate.opsForHash().putAll(GlobalConstants.URL_PERM_ROLES_KEY,urlPermRoles);
                redisTemplate.convertAndSend("cleanRoleLocalCache",true);
            }
@@ -58,12 +63,12 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper,Sy
                     .collect(Collectors.toList());
             if(CollectionUtil.isNotEmpty(btnPermList)){
                 Map<String,List<String>> btnPermRoles = CollectionUtil.newHashMap();
-
                 btnPermList.stream().forEach(item -> {
                     String perm = item.getBtnPerm();
                     List<String> roles = item.getRoles();
                     btnPermRoles.put(perm, roles);
                 });
+                //将按钮角色按钮放到redis
                 redisTemplate.opsForHash().putAll(GlobalConstants.BTN_PERM_ROLES_KEY,btnPermRoles);
 
             }

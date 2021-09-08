@@ -19,6 +19,9 @@ import java.util.List;
 
 /**
  * jwt 工具类
+ *
+ * Header(头部)、Payload(负载)、Signature(签名)
+ *
  * @author:GSHG
  * @date: 2021-08-26 10:07
  * description:
