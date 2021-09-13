@@ -23,6 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
+        //配置请求访问权限
         httpSecurity.authorizeRequests()
                 .antMatchers("/oauth/**").permitAll()
                 // @link https://gitee.com/xiaoym/knife4j/issues/I1Q5X6 (接口文档knife4j需要放行的规则)
@@ -31,8 +32,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 // 由于使用的是JWT，我们这里不需要csrf,这里禁用csrf
                 .and().csrf().disable();
-
-
     }
 
 

@@ -2,6 +2,7 @@ package com.youlai.admin.config;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
@@ -28,7 +29,7 @@ import java.util.List;
 @Import(BeanValidatorPluginsConfiguration.class)
 @Slf4j
 public class SwaggerConfiguration {
-
+    @Bean
     public Docket restApi(){
         //schema
         List<GrantType> grantTypes = new ArrayList<>();

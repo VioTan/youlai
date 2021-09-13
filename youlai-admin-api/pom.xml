@@ -54,6 +54,12 @@
             <artifactId>feign-okhttp</artifactId>
         </dependency>
 
+        <!-- test RSA加密解密 -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+        </dependency>
 
     </dependencies>
 

@@ -69,7 +69,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         @Override
         @SneakyThrows
         public void configure(ClientDetailsServiceConfigurer configurer){
-            //实现客户端详情服务，从数据库中获取认证信息
+            //实现客户端详情服务，从数据库中获取认证信息，oauth_client表信息
             configurer.withClientDetails(clientDetailsService);
         }
 
@@ -89,17 +89,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
             //jwt插入用户信息需要用TokenEnhancerChain作为容器
             TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
             List<TokenEnhancer> tokenEnhancers = new ArrayList<>();
-            //通过userId和username  JWT内容增强(自定义字段userId和username)  使用匿名方法返回accessToken
+            //tokenEnhancer()  JWT内容增强(自定义字段userId和username)  使用匿名方法返回accessToken
             tokenEnhancers.add(tokenEnhancer());
-            //使用非对称加密算法，对token签名(私钥)
+            //使用非对称加密算法，对token签名(私钥)，通过获取私钥，使用JwtAccessTokenConverter 对其签名签名
             tokenEnhancers.add(jwtAccessTokenConverter());
             tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
 
             endpoints.authenticationManager(authenticationManager)
-                    // 配置JwtAccessToken转换器
+                    // 配置JwtAccessToken转换器  jwtAccessTokenConverter使用非对称加密算法对token签名
                      .accessTokenConverter(jwtAccessTokenConverter())
                     .tokenEnhancer(tokenEnhancerChain)
-                    // refresh_token需要userDetailsService
+                    // refresh_token需要userDetailsService-- 获取用户详情，角色判断是否有权限
                     .userDetailsService(userDetailsService)
                     // refresh token有两种使用方式：重复使用(true)、非重复使用(false)，默认为true
                     //      1 重复使用：access token过期刷新时， refresh token过期时间未改变，仍以初次生成的时间为准

@@ -26,7 +26,9 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
-
+    /**
+     * 获取调用Feign接口获取用户(角色)
+     */
     private UserFeignClient userFeignClient;
 
     @Override

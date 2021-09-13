@@ -37,7 +37,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper,Sy
     public boolean refreshPermRolesRules() {
         //删除redis的键
         redisTemplate.delete(Arrays.asList(GlobalConstants.URL_PERM_ROLES_KEY,GlobalConstants.BTN_PERM_ROLES_KEY));
-        //从数据库中获取权限
+        //从数据库中获取角色的权限  crud
         List<SysPermission> permissions = this.listPermRoles();
         if(CollectionUtil.isNotEmpty(permissions)){
             // 初始化URL【权限->角色(集合)】规则
@@ -53,7 +53,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper,Sy
                    List<String> roles = item.getRoles();
                    urlPermRoles.put(perm,roles);
                });
-               //讲权限集合放到redis
+               //将权限集合放到redis
                redisTemplate.opsForHash().putAll(GlobalConstants.URL_PERM_ROLES_KEY,urlPermRoles);
                redisTemplate.convertAndSend("cleanRoleLocalCache",true);
            }

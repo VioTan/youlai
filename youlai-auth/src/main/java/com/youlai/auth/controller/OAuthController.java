@@ -16,10 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.KeyPair;
 import java.security.Principal;
@@ -53,7 +51,17 @@ public class OAuthController {
             @ApiImplicitParam(name = "password",defaultValue = "123456",value = "登录密码")
     })
     @PostMapping("/token")
-    public  Object posrAssessToken(Principal principal,Map<String,String> parameters) throws HttpRequestMethodNotSupportedException {
+    public  Object postAccessToken(@ApiIgnore Principal principal, @ApiIgnore @RequestParam Map<String,String> parameters)
+            throws HttpRequestMethodNotSupportedException {
+        /**
+         * 获取登录认证的客户端ID
+         * 方式一：client_id、client_secret放在请求路径中(注：当前版本已废弃)
+         * 放在请求头（Request Headers）中的Authorization字段，且经过加密，例如 Basic Y2xpZW50OnNlY3JldA== 明文等于 client:secret
+         *
+         * 兼容两种方式获取Oauth2信息(client_id,client_secret)
+         *
+         *
+         */
         String clentId = JwtUtils.getOAuthClientId();
         OAuthClientEnum client = OAuthClientEnum.getByClientId(clentId);
         switch (client){
@@ -70,6 +78,7 @@ public class OAuthController {
     public Map<String, Object> getPublicKey(){
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAKey key = new RSAKey.Builder(publicKey).build();
+        //返回公钥，供资源服务器验签使用
         return new JWKSet(key).toJSONObject();
     }
 

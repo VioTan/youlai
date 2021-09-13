@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-@FeignClient(value = "youlai-admin",fallback = UserFeignFallbackClient.class)
+
 /**
  * @author Eric
  */
+@FeignClient(value = "youlai-admin",fallback = UserFeignFallbackClient.class)
 public interface UserFeignClient {
 
     @GetMapping("/api/v1/users/username/{username}")

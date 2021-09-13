@@ -18,7 +18,11 @@ import java.util.List;
  */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
-
+    /**
+     * 获取用户详情，角色
+     * @param username
+     * @return
+     */
     SysUser getByUsername(String username);
 
     @Select("<script> " +

@@ -11,9 +11,16 @@ import java.util.List;
  * description:
  */
 public interface ISysPermissionService extends IService<SysPermission> {
-
+    /**
+     * 获取角色所拥有的权限 crud增删改查
+     * @return
+     */
     List<SysPermission> listPermRoles();
 
+    /**
+     *
+     * @return
+     */
     boolean refreshPermRolesRules();
 
 }
