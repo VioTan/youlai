@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface SysPermissionMapper extends BaseMapper<SysPermission> {
     /**
-     * 获取角色权限 crud
+     * 获取所有角色的权限 crud
      * @return
      */
     List<SysPermission> listPermRoles();

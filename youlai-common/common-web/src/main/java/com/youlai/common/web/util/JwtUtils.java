@@ -73,22 +73,23 @@ public class JwtUtils {
     @SneakyThrows
     public static String getOAuthClientId(){
         String clientId;
-       HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+        //获取请求头
+        HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 
-       //从请求路径中获取 获取登录认证的客户端ID
+       //从请求路径中获取 获取登录认证的客户端ID  client_id
         clientId = request.getParameter(AuthConstants.CLIENT_ID_KEY);
         if(StrUtil.isNotBlank(clientId)){
             return clientId;
         }
 
-        //从请求头获取 获取登录认证的客户端ID
+        //从请求头获取 获取登录认证的客户端ID  Authorization
         String basic = request.getHeader(AuthConstants.AUTHORIZATION_KEY);
-        //判断是否有请求keyCode
+        //判断是否有请求头含有 basic
         if(StrUtil.isNotBlank(basic) && basic.startsWith(AuthConstants.BASIC_PREFIX)){
             //替换请求keyCode
             basic = basic.replace(AuthConstants.BASIC_PREFIX, Strings.EMPTY);
             //解密
-            String basicPlainText = new String(new BASE64Decoder().decodeBuffer(basic));
+            String basicPlainText = new String(new BASE64Decoder().decodeBuffer(basic),"UTF-8");
             clientId = basicPlainText.split(":")[0];
         }
         return clientId;

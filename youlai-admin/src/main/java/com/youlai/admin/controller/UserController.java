@@ -52,7 +52,7 @@ public class UserController {
             @ApiImplicitParam(name = "deptId", value = "部门ID", paramType = "query", dataType = "Long"),
     })
     @GetMapping
-    private Result list(       Integer page,
+    public Result list(       Integer page,
                                Integer limit,
                                String nickname,
                                String mobile,

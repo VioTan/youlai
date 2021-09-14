@@ -27,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests()
                 .antMatchers("/oauth/**").permitAll()
                 // @link https://gitee.com/xiaoym/knife4j/issues/I1Q5X6 (接口文档knife4j需要放行的规则)
-                .antMatchers("/webjars/**","/doc.html","/v2/api-docs").permitAll()
+                .antMatchers("/webjars/**","/doc.html","/swagger-resources/**","/v2/api-docs").permitAll()
                 // 其余所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 // 由于使用的是JWT，我们这里不需要csrf,这里禁用csrf

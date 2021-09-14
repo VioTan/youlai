@@ -96,6 +96,9 @@ public class ResourceServerConfig {
         }
 
     /**
+     *      * @URL: http://slproweb.com/products/Win32OpenSSL.html
+     *      * 需要安装openSSL生成校验的公共令牌
+     *
      *  本地获取JWT验签公钥
      * @return
      */

@@ -1,0 +1,39 @@
+package com.youlai.gateway.config;
+
+import com.youlai.gateway.component.RedisChannelListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+
+/**
+ * @author:GSHG
+ * @date: 2021-09-14 15:37
+ * description:
+ */
+@Configuration
+public class RedisGatewyConfig {
+    @Autowired
+    private RedisConnectionFactory connectionFactory;
+
+    public RedisMessageListenerContainer redisMessageListenerContainer(){
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.addMessageListener(messageListenerAdapter(),channelTopic());
+        return container;
+    }
+
+    @Bean
+    MessageListenerAdapter messageListenerAdapter(){ return new MessageListenerAdapter(redisChannelListener()); }
+
+    @Bean
+    RedisChannelListener redisChannelListener(){
+        return new RedisChannelListener();
+    }
+
+    ChannelTopic channelTopic(){ return new ChannelTopic("cleanRoleLocalCache"); }
+
+}

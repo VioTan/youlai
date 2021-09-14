@@ -91,7 +91,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
             List<TokenEnhancer> tokenEnhancers = new ArrayList<>();
             //tokenEnhancer()  JWT内容增强(自定义字段userId和username)  使用匿名方法返回accessToken
             tokenEnhancers.add(tokenEnhancer());
-            //使用非对称加密算法，对token签名(私钥)，通过获取私钥，使用JwtAccessTokenConverter 对其签名签名
+            //使用非对称加密算法，对token签名(私钥)，通过获取私钥，使用JwtAccessTokenConverter 对其签名
             tokenEnhancers.add(jwtAccessTokenConverter());
             tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
 
