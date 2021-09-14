@@ -18,7 +18,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 public class RedisGatewyConfig {
     @Autowired
     private RedisConnectionFactory connectionFactory;
-
+    @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(){
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
@@ -33,7 +33,7 @@ public class RedisGatewyConfig {
     RedisChannelListener redisChannelListener(){
         return new RedisChannelListener();
     }
-
+    @Bean
     ChannelTopic channelTopic(){ return new ChannelTopic("cleanRoleLocalCache"); }
 
 }

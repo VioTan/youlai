@@ -46,7 +46,6 @@ import java.util.List;
 @Configuration
 //注解需要使用@EnableWebFluxSecurity而非@EnableWebSecurity,因为SpringCloud Gateway基于WebFlux
 @EnableWebFluxSecurity
-@Component
 public class ResourceServerConfig {
 
         private ResourceServerManager resourceServerManager;
@@ -73,6 +72,20 @@ public class ResourceServerConfig {
             return http.build();
 
         }
+
+    /**
+     * token无效或者已过期  自定义响应
+     * @return
+     */
+    @Bean
+    ServerAuthenticationEntryPoint authenticationEntryPoint(){
+        return ((exchange, ex) -> {
+            Mono<Void> mono = Mono.defer(() -> Mono.just(exchange.getResponse()))
+                    .flatMap(response -> ResponseUtils.writeErrorInfo(response, ResultCodeEnum.TOKEN_INVALID_OR_EXPIRED));
+            return mono;
+
+        });
+    }
 
     /**
      * @link https://blog.csdn.net/qq_24230139/article/details/105091273
@@ -115,19 +128,6 @@ public class ResourceServerConfig {
             return rsaPublicKey;
         }
 
-    /**
-     * token无效或者已过期  自定义响应
-     * @return
-     */
-    @Bean
-    ServerAuthenticationEntryPoint authenticationEntryPoint(){
-        return ((exchange, ex) -> {
-           Mono<Void> mono = Mono.defer(() -> Mono.just(exchange.getResponse()))
-                    .flatMap(response -> ResponseUtils.writeErrorInfo(response, ResultCodeEnum.TOKEN_INVALID_OR_EXPIRED));
-            return mono;
-
-        });
-        }
 
     /**
      * 未授权 自定义响应
