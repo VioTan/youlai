@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         switch (client){
             default:
                 result = userFeignClient.getUserByUsername(username);
-                if(ResultCodeEnum.SUCCESS.equals(result.getCode())){
+                if(ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())){
                    SysUser sysUser = (SysUser) result.getData();
                    oAuthUserDetails = new OAuthUserDetails(sysUser);
 

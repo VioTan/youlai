@@ -61,7 +61,7 @@ public class JwtUtils {
     }
 
     /**
-     * 获取登录认真的客户端ID
+     * 获取登录认证的客户端ID
      *
      * 兼容两种方式获取Oauth2客户端信息(client_id,client_sercet)
      * 方式一：client_id,client_secret放在请求路径中

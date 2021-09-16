@@ -1,19 +1,18 @@
 package com.youlai.auth.common.enums;
-
 import lombok.Getter;
 
+
 /**
- * @author:GSHG
- * @date: 2021-08-26 12:13
- * description:
+ * @author haoxr
+ * @description TODO
+ * @createTime 2021/5/31 23:55
  */
-public enum  OAuthClientEnum {
-    /**
-     *  授权key
-     */
+public enum OAuthClientEnum {
+
     TEST("client", "测试客户端"),
     ADMIN("youlai-admin", "系统管理端"),
     WEAPP("youlai-weapp", "微信小程序端");
+
 
     @Getter
     private String clientId;
@@ -26,10 +25,10 @@ public enum  OAuthClientEnum {
         this.desc=desc;
     }
 
-    public static OAuthClientEnum getByClientId(String clientId){
-        for(OAuthClientEnum clientEnum: OAuthClientEnum.values()){
-            if(clientEnum.getClientId().equals(clientId)){
-                return clientEnum;
+    public static OAuthClientEnum getByClientId(String clientId) {
+        for (OAuthClientEnum client : OAuthClientEnum.values()) {
+            if(client.getClientId().equals(clientId)){
+                return client;
             }
         }
         return null;

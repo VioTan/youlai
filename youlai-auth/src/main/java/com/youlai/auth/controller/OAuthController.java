@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
@@ -41,34 +40,35 @@ public class OAuthController {
 
     private KeyPair keyPair;
 
-    @ApiOperation(value = "OAuth2认证",notes = "login")
+    @ApiOperation(value = "OAuth2认证", notes = "login")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "grant_type",defaultValue = "password",value = "授权模式",required = true),
-            @ApiImplicitParam(name = "client_id",value = "Oauth2客户端ID（新版本需放置请求头）",required = true),
-            @ApiImplicitParam(name = "client_secret",value = "Oauth2客户端秘钥（新版本需放置请求头）",required = true),
-            @ApiImplicitParam(name = "refresh_token",value = "刷新token"),
-            @ApiImplicitParam(name = "username",defaultValue = "admin",value = "登录用户名"),
-            @ApiImplicitParam(name = "password",defaultValue = "123456",value = "登录密码")
+            @ApiImplicitParam(name = "grant_type", defaultValue = "password", value = "授权模式", required = true),
+            @ApiImplicitParam(name = "client_id", value = "Oauth2客户端ID（新版本需放置请求头）", required = true),
+            @ApiImplicitParam(name = "client_secret", value = "Oauth2客户端秘钥（新版本需放置请求头）", required = true),
+            @ApiImplicitParam(name = "refresh_token", value = "刷新token"),
+            @ApiImplicitParam(name = "username", defaultValue = "admin", value = "登录用户名"),
+            @ApiImplicitParam(name = "password", defaultValue = "123456", value = "登录密码")
     })
     @PostMapping("/token")
-    public  Object postAccessToken(@ApiIgnore Principal principal, @ApiIgnore @RequestParam Map<String,String> parameters)
-            throws HttpRequestMethodNotSupportedException {
+    public Object postAccessToken(
+            @ApiIgnore Principal principal,
+            @ApiIgnore @RequestParam Map<String, String> parameters
+    ) throws HttpRequestMethodNotSupportedException {
+
         /**
          * 获取登录认证的客户端ID
+         *
+         * 兼容两种方式获取Oauth2客户端信息（client_id、client_secret）
          * 方式一：client_id、client_secret放在请求路径中(注：当前版本已废弃)
-         * 放在请求头（Request Headers）中的Authorization字段，且经过加密，例如 Basic Y2xpZW50OnNlY3JldA== 明文等于 client:secret
-         *
-         * 兼容两种方式获取Oauth2信息(client_id,client_secret)
-         *
-         *
+         * 方式二：放在请求头（Request Headers）中的Authorization字段，且经过加密，例如 Basic Y2xpZW50OnNlY3JldA== 明文等于 client:secret
          */
-        String clentId = JwtUtils.getOAuthClientId();
-        OAuthClientEnum client = OAuthClientEnum.getByClientId(clentId);
-        switch (client){
+        String clientId = JwtUtils.getOAuthClientId();
+        OAuthClientEnum client = OAuthClientEnum.getByClientId(clientId);
+        switch (client) {
             case TEST: // knife4j接口测试文档使用 client_id/client_secret : client/123456
-                return tokenEndpoint.postAccessToken(principal,parameters);
-                default:
-                    return Result.success(tokenEndpoint.postAccessToken(principal,parameters).getBody());
+                return tokenEndpoint.postAccessToken(principal, parameters).getBody();
+            default:
+                return Result.success(tokenEndpoint.postAccessToken(principal, parameters).getBody());
         }
     }
 

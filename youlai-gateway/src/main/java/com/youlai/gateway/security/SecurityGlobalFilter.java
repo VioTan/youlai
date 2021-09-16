@@ -1,12 +1,16 @@
 package com.youlai.gateway.security;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.core.common.constant.AuthConstants;
 import com.core.common.result.ResultCodeEnum;
+import com.nimbusds.jose.JWSObject;
 import com.youlai.gateway.util.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -19,6 +23,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.URLEncoder;
+
 /**
  * @author:GSHG
  * @date: 2021-09-14 16:00
@@ -29,7 +35,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SecurityGlobalFilter implements GlobalFilter, Ordered {
 
-    private final RedisTemplate redisTemplatel;
+    private final RedisTemplate redisTemplate;
+
+
     @Value("${spring.profiles.active}")
     private String env;
 
@@ -39,19 +47,43 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
+
         // 线上演示环境禁止修改和删除
-        if("prod".equals(env) && (HttpMethod.DELETE.toString().equals(request.getMethodValue())) || HttpMethod.PUT.toString().equals(request.getMethodValue()) ){
-                return ResponseUtils.writeErrorInfo(response, ResultCodeEnum.FORBIDDEN_OPERATION);
+        if (env.equals("prod")
+                && (HttpMethod.DELETE.toString().equals(request.getMethodValue()) // 删除方法
+                || HttpMethod.PUT.toString().equals(request.getMethodValue())) // 修改方法
+        ) {
+            return ResponseUtils.writeErrorInfo(response, ResultCodeEnum.FORBIDDEN_OPERATION);
         }
 
         // 非JWT或者JWT为空不作处理
         String token = request.getHeaders().getFirst(AuthConstants.AUTHORIZATION_KEY);
-        if(StrUtil.isBlank(token) || token.startsWith(AuthConstants.AUTHORIZATION_PREFIX)){
-
+        if(StrUtil.isBlank(token) || !token.startsWith(AuthConstants.AUTHORIZATION_PREFIX)){
+            return chain.filter(exchange);
         }
 
+        //解析jti,以jti判断redis的黑名单列表是否存在，存在拦截响应token失效
+        token = token.replace(AuthConstants.AUTHORIZATION_PREFIX, Strings.EMPTY);
 
-        return null;
+
+        JWSObject jwsObject = JWSObject.parse(token);
+        String payload = jwsObject.getPayload().toString();
+
+        JSONObject jsonObject = JSONUtil.parseObj(payload);
+        String jti = jsonObject.getStr(AuthConstants.JWT_JTI);
+        //判断redis中是否含有Token 唯一标识
+        Boolean isBlack = redisTemplate.hasKey(AuthConstants.TOKEN_BLACKLIST_PREFIX + jti);
+        if(isBlack){
+            return ResponseUtils.writeErrorInfo(response,ResultCodeEnum.TOKEN_ACCESS_FORBIDDEN);
+        }
+
+        //存在token且不是黑名单，request写入JWT的载体信息
+        exchange.getRequest().mutate()
+                .header(AuthConstants.JWT_PAYLOAD_KEY, URLEncoder.encode(payload,"UTF8"))
+                .build();
+        exchange.mutate().request(request).build();
+
+        return chain.filter(exchange);
     }
 
     @Override
