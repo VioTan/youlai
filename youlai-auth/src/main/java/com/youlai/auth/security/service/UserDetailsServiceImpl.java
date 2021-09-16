@@ -47,7 +47,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 if(ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())){
                    SysUser sysUser = (SysUser) result.getData();
                    oAuthUserDetails = new OAuthUserDetails(sysUser);
-
                 }
                 break;
         }
